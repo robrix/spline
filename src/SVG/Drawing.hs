@@ -42,7 +42,7 @@ runDrawing :: (Real a, Show a) => Linear.V2 a -> Drawing a () -> String
 runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . flip evalState Nothing . iterFreer algebra . fmap (const (return mempty))
   where algebra :: Show a => DrawingF a x -> (x -> State (Maybe (Colour a)) S.Svg) -> State (Maybe (Colour a)) S.Svg
         algebra drawing cont = case drawing of
-          Fill c -> put (Just c) >> return mempty
+          Fill c -> put (Just c) >> cont ()
           Path p -> do
             fill <- get
             return $ S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p))) !? (A.fill . renderColour <$> fill)
