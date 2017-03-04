@@ -59,6 +59,7 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
         renderPath path cont = case path of
           Move (V2 x y) -> S.m x y >> cont ()
           Line (V2 x y) -> S.l x y >> cont ()
+          Cubic (V2 c1x c1y) (V2 c2x c2y) (V2 x y) -> S.c c1x c1y c2x c2y x y
 
         renderColour :: Colour a -> S.AttributeValue
         renderColour colour = case colour of
