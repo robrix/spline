@@ -45,7 +45,7 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
           Fill c -> put (Just c) >> return mempty
           Path p -> do
             fill <- get
-            return $ S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p))) & case fill of { Just fill -> (! A.fill (renderColour fill)) ; _ -> id }
+            return $ S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p))) !? (A.fill . renderColour <$> fill)
 
         (!?) e = maybe e (e !)
 
