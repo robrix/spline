@@ -1,19 +1,19 @@
 {-# LANGUAGE GADTs #-}
-module SVG.Drawing
+module Spline.Drawing
 ( Colour(..)
 , Drawing()
 , fill
 , stroke
 , path
 , runDrawing
-, module SVG.Path
+, module Spline.Path
 ) where
 
 import Control.Monad.Free.Freer
 import Control.Monad.State
 import Data.Function
 import Linear.V2 as Linear
-import SVG.Path
+import Spline.Path
 import qualified Text.Blaze.Svg11 as S
 import Text.Blaze.Svg11 as S ((!))
 import qualified Text.Blaze.Svg11.Attributes as A

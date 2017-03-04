@@ -1,7 +1,7 @@
 module Main where
 
 import Linear.V2
-import SVG.Drawing
+import Spline.Drawing
 
 main :: IO ()
 main = putStrLn $ runDrawing (V2 200 200) $ do

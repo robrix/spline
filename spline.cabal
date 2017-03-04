@@ -15,8 +15,8 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     SVG.Drawing
-                     , SVG.Path
+  exposed-modules:     Spline.Drawing
+                     , Spline.Path
   build-depends:       base >= 4.7 && < 5
                      , blaze-svg
                      , freer-cofreer

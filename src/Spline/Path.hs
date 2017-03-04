@@ -1,5 +1,5 @@
 {-# LANGUAGE GADTs #-}
-module SVG.Path where
+module Spline.Path where
 
 import Control.Monad.Free.Freer
 import Linear.V2 as Linear
