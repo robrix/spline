@@ -1,11 +1,16 @@
 {-# LANGUAGE GADTs #-}
-module SVG.Drawing where
+module SVG.Drawing
+( Drawing()
+, path
+, runDrawing
+, module SVG.Path
+) where
 
 import Control.Monad.Free.Freer
 import Linear.V2 as Linear
 import SVG.Path
-import Text.Blaze.Svg11 as S hiding (Path)
-import Text.Blaze.Svg11.Attributes as S
+import Text.Blaze.Svg11 as S hiding (Path, path)
+import Text.Blaze.Svg11.Attributes as S hiding (path)
 import Text.Blaze.Svg.Renderer.Pretty as S
 
 data DrawingF a f where
