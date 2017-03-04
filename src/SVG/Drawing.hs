@@ -41,4 +41,10 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
           Move (V2 x y) -> S.m x y >> cont ()
           Line (V2 x y) -> S.l x y >> cont ()
 
+        renderColour :: Colour -> S.AttributeValue
+        renderColour colour = case colour of
+          Black -> S.stringValue "black"
+          White -> S.stringValue "white"
+          Transparent -> S.stringValue "transparent"
+
         realValue = S.stringValue . show . round . toRational
