@@ -14,6 +14,8 @@ import Text.Blaze.Svg11 as S ((!))
 import qualified Text.Blaze.Svg11.Attributes as A
 import qualified Text.Blaze.Svg.Renderer.Pretty as S
 
+data Colour = Black | White | Transparent
+
 data DrawingF a f where
   Path :: Path a () -> DrawingF a ()
 
