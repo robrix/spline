@@ -37,5 +37,6 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
         renderPath :: Show a => PathF a x -> (x -> S.Path) -> S.Path
         renderPath path cont = case path of
           Move (V2 x y) -> S.m x y >> cont ()
+          Line (V2 x y) -> S.l x y >> cont ()
 
         realValue = S.stringValue . show . round . toRational
