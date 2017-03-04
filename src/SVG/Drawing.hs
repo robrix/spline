@@ -12,6 +12,14 @@ data DrawingF a where
 
 type Drawing = Freer DrawingF
 
+-- Smart constructors
+
+move :: Real a => V2 a -> Drawing ()
+move p = Move p `Then` return
+
+
+-- Running
+
 runDrawing :: Real a => Linear.V2 a -> Drawing () -> String
 runDrawing (V2 w h) = renderSvg . (docTypeSvg ! width (realValue w) ! height (realValue h)) . iterFreer algebra . fmap (const mempty)
   where algebra :: DrawingF x -> (x -> Svg) -> Svg
