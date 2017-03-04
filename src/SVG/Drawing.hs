@@ -14,7 +14,7 @@ import Text.Blaze.Svg11 as S ((!))
 import qualified Text.Blaze.Svg11.Attributes as A
 import qualified Text.Blaze.Svg.Renderer.Pretty as S
 
-data Colour = Black | White | Transparent
+data Colour a = Black | White | Transparent
 
 data DrawingF a f where
   Path :: Path a () -> DrawingF a ()
@@ -41,7 +41,7 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
           Move (V2 x y) -> S.m x y >> cont ()
           Line (V2 x y) -> S.l x y >> cont ()
 
-        renderColour :: Colour -> S.AttributeValue
+        renderColour :: Colour a -> S.AttributeValue
         renderColour colour = case colour of
           Black -> S.stringValue "black"
           White -> S.stringValue "white"
