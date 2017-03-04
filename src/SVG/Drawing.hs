@@ -22,6 +22,7 @@ data Colour a = Black | White | Transparent
 
 data DrawingF a f where
   Fill :: Colour a -> DrawingF a ()
+  Stroke :: Colour a -> DrawingF a ()
   Path :: Path a () -> DrawingF a ()
 
 type Drawing a = Freer (DrawingF a)
@@ -29,22 +30,26 @@ type Drawing a = Freer (DrawingF a)
 
 -- Smart constructors
 
-path :: Path a () -> Drawing a ()
-path p = Path p `Then` return
-
 fill :: Colour a -> Drawing a ()
 fill c = Fill c `Then` return
+
+stroke :: Colour a -> Drawing a ()
+stroke c = Stroke c `Then` return
+
+path :: Path a () -> Drawing a ()
+path p = Path p `Then` return
 
 
 -- Running
 
 runDrawing :: (Real a, Show a) => Linear.V2 a -> Drawing a () -> String
-runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . flip evalState Nothing . iterFreer algebra . fmap (const (return mempty))
-  where algebra :: Show a => DrawingF a x -> (x -> State (Maybe (Colour a)) S.Svg) -> State (Maybe (Colour a)) S.Svg
+runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . flip evalState (DrawingState Nothing Nothing) . iterFreer algebra . fmap (const (return mempty))
+  where algebra :: Show a => DrawingF a x -> (x -> State (DrawingState a) S.Svg) -> State (DrawingState a) S.Svg
         algebra drawing cont = case drawing of
-          Fill c -> put (Just c) >> cont ()
+          Fill c -> modify (setFillColour (Just c)) >> cont ()
+          Stroke c -> modify (setStrokeColour (Just c)) >> cont ()
           Path p -> do
-            fill <- get
+            fill <- gets fillColour
             return $ S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p))) !? (A.fill . renderColour <$> fill)
 
         (!?) e = maybe e (e !)
@@ -61,3 +66,12 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
           Transparent -> S.stringValue "transparent"
 
         realValue = S.stringValue . show . round . toRational
+
+
+data DrawingState a = DrawingState { fillColour :: Maybe (Colour a), strokeColour :: Maybe (Colour a) }
+
+setFillColour :: Maybe (Colour a) -> DrawingState a -> DrawingState a
+setFillColour c s = s { fillColour = c }
+
+setStrokeColour :: Maybe (Colour a) -> DrawingState a -> DrawingState a
+setStrokeColour c s = s { strokeColour = c }
