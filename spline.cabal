@@ -28,6 +28,7 @@ executable spline-exe
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
+                     , linear
                      , spline
   default-language:    Haskell2010
 
