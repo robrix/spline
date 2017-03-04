@@ -28,13 +28,14 @@ path p = Path p `Then` return
 
 -- Running
 
-runDrawing :: Real a => Linear.V2 a -> Drawing a () -> String
+runDrawing :: (Real a, Show a) => Linear.V2 a -> Drawing a () -> String
 runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . iterFreer algebra . fmap (const mempty)
-  where algebra :: DrawingF a x -> (x -> S.Svg) -> S.Svg
+  where algebra :: Show a => DrawingF a x -> (x -> S.Svg) -> S.Svg
         algebra drawing cont = case drawing of
-          Path p -> S.path ! A.d (iterFreer renderPath (mempty <$ p))
+          Path p -> S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p)))
 
-        renderPath :: PathF a x -> (x -> S.AttributeValue) -> S.AttributeValue
-        renderPath path cont = mempty
+        renderPath :: Show a => PathF a x -> (x -> S.Path) -> S.Path
+        renderPath path cont = case path of
+          Move (V2 x y) -> S.m x y
 
         realValue = S.stringValue . show . round . toRational
