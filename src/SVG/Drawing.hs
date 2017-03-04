@@ -47,6 +47,8 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
             fill <- get
             return $ S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p))) & case fill of { Just fill -> (! A.fill (renderColour fill)) ; _ -> id }
 
+        (!?) e = maybe e (e !)
+
         renderPath :: Show a => PathF a x -> (x -> S.Path) -> S.Path
         renderPath path cont = case path of
           Move (V2 x y) -> S.m x y >> cont ()
