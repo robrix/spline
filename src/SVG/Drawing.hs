@@ -13,6 +13,8 @@ data DrawingF a where
 type Drawing = Freer DrawingF
 
 runDrawing :: Real a => Linear.V2 a -> Drawing () -> String
-runDrawing (V2 w h) = renderSvg . (docTypeSvg ! width (stringValue (show (toRational w))) ! height (stringValue (show (toRational h)))) . iterFreer algebra . fmap (const mempty)
+runDrawing (V2 w h) = renderSvg . (docTypeSvg ! width (realValue w) ! height (realValue h)) . iterFreer algebra . fmap (const mempty)
   where algebra :: DrawingF x -> (x -> Svg) -> Svg
         algebra drawing cont = mempty
+
+        realValue = stringValue . show . round . toRational
