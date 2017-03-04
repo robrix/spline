@@ -9,6 +9,7 @@ import Text.Blaze.Svg.Renderer.Pretty as S
 
 data DrawingF a f where
   Move :: Linear.V2 a -> DrawingF a ()
+  Line :: Linear.V2 a -> DrawingF a ()
 
 type Drawing a = Freer (DrawingF a)
 
@@ -16,6 +17,9 @@ type Drawing a = Freer (DrawingF a)
 
 move :: V2 a -> Drawing a ()
 move p = Move p `Then` return
+
+line :: V2 a -> Drawing a ()
+line p = Line p `Then` return
 
 
 -- Running
