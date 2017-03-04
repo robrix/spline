@@ -3,13 +3,15 @@ module SVG.Drawing where
 
 import Control.Monad.Free.Freer
 import Linear.V2 as Linear
+import Text.Blaze.Svg11 as S
+import Text.Blaze.Svg.Renderer.Pretty as S
 
 data DrawingF a where
   Move :: Real a => Linear.V2 a -> DrawingF ()
 
 type Drawing = Freer DrawingF
 
-runDrawing :: Real a => Linear.V2 a -> Drawing () -> ShowS
-runDrawing size = iterFreer algebra . fmap (const id)
-  where algebra :: DrawingF x -> (x -> ShowS) -> ShowS
-        algebra drawing cont = id
+runDrawing :: Real a => Linear.V2 a -> Drawing () -> String
+runDrawing size = renderSvg . docTypeSvg . iterFreer algebra . fmap (const mempty)
+  where algebra :: DrawingF x -> (x -> Svg) -> Svg
+        algebra drawing cont = mempty
