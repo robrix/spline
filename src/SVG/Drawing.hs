@@ -1,6 +1,8 @@
 {-# LANGUAGE GADTs #-}
 module SVG.Drawing
-( Drawing()
+( Colour(..)
+, Drawing()
+, fill
 , path
 , runDrawing
 , module SVG.Path
