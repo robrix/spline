@@ -49,8 +49,8 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
           Fill c -> modify (setFillColour (Just c)) >> cont ()
           Stroke c -> modify (setStrokeColour (Just c)) >> cont ()
           Path p -> do
-            fill <- gets fillColour
-            return $ S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p))) !? (A.fill . renderColour <$> fill)
+            state <- get
+            return $ S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p))) !? (A.fill . renderColour <$> fillColour state) !? (A.stroke . renderColour <$> strokeColour state)
 
         (!?) e = maybe e (e !)
 
