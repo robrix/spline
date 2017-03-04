@@ -3,27 +3,21 @@ module SVG.Drawing where
 
 import Control.Monad.Free.Freer
 import Linear.V2 as Linear
-import Text.Blaze.Svg11 as S
+import SVG.Path
+import Text.Blaze.Svg11 as S hiding (Path)
 import Text.Blaze.Svg11.Attributes as S
 import Text.Blaze.Svg.Renderer.Pretty as S
 
 data DrawingF a f where
-  Move :: Linear.V2 a -> DrawingF a ()
-  Line :: Linear.V2 a -> DrawingF a ()
-  Close :: DrawingF a ()
+  Path :: Path a () -> DrawingF a ()
 
 type Drawing a = Freer (DrawingF a)
 
+
 -- Smart constructors
 
-move :: V2 a -> Drawing a ()
-move p = Move p `Then` return
-
-line :: V2 a -> Drawing a ()
-line p = Line p `Then` return
-
-close :: Drawing a ()
-close = Close `Then` return
+path :: Path a () -> Drawing a ()
+path p = Path p `Then` return
 
 
 -- Running
