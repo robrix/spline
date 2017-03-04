@@ -3,6 +3,7 @@ module SVG.Drawing
 ( Colour(..)
 , Drawing()
 , fill
+, stroke
 , path
 , runDrawing
 , module SVG.Path
