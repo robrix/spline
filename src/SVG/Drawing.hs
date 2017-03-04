@@ -11,7 +11,7 @@ import Linear.V2 as Linear
 import SVG.Path
 import qualified Text.Blaze.Svg11 as S
 import Text.Blaze.Svg11 as S ((!))
-import qualified Text.Blaze.Svg11.Attributes as S
+import qualified Text.Blaze.Svg11.Attributes as A
 import qualified Text.Blaze.Svg.Renderer.Pretty as S
 
 data DrawingF a f where
@@ -29,8 +29,9 @@ path p = Path p `Then` return
 -- Running
 
 runDrawing :: Real a => Linear.V2 a -> Drawing a () -> String
-runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! S.width (realValue w) ! S.height (realValue h)) . iterFreer algebra . fmap (const mempty)
+runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . iterFreer algebra . fmap (const mempty)
   where algebra :: DrawingF a x -> (x -> S.Svg) -> S.Svg
-        algebra drawing cont = mempty
+        algebra drawing cont = case drawing of
+          Path p -> S.path ! A.d (iterFreer (const mempty) (mempty <$ p))
 
         realValue = S.stringValue . show . round . toRational
