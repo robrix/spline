@@ -14,7 +14,7 @@ type Drawing a = Freer (DrawingF a)
 
 -- Smart constructors
 
-move :: Real a => V2 a -> Drawing a ()
+move :: V2 a -> Drawing a ()
 move p = Move p `Then` return
 
 
