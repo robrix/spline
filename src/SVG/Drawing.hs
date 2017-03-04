@@ -7,6 +7,8 @@ module SVG.Drawing
 ) where
 
 import Control.Monad.Free.Freer
+import Control.Monad.State
+import Data.Function
 import Linear.V2 as Linear
 import SVG.Path
 import qualified Text.Blaze.Svg11 as S
@@ -17,6 +19,7 @@ import qualified Text.Blaze.Svg.Renderer.Pretty as S
 data Colour a = Black | White | Transparent
 
 data DrawingF a f where
+  Fill :: Colour a -> DrawingF a ()
   Path :: Path a () -> DrawingF a ()
 
 type Drawing a = Freer (DrawingF a)
@@ -27,14 +30,20 @@ type Drawing a = Freer (DrawingF a)
 path :: Path a () -> Drawing a ()
 path p = Path p `Then` return
 
+fill :: Colour a -> Drawing a ()
+fill c = Fill c `Then` return
+
 
 -- Running
 
 runDrawing :: (Real a, Show a) => Linear.V2 a -> Drawing a () -> String
-runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . iterFreer algebra . fmap (const mempty)
-  where algebra :: Show a => DrawingF a x -> (x -> S.Svg) -> S.Svg
+runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . flip evalState Nothing . iterFreer algebra . fmap (const (return mempty))
+  where algebra :: Show a => DrawingF a x -> (x -> State (Maybe (Colour a)) S.Svg) -> State (Maybe (Colour a)) S.Svg
         algebra drawing cont = case drawing of
-          Path p -> S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p)))
+          Fill c -> put (Just c) >> return mempty
+          Path p -> do
+            fill <- get
+            return $ S.path ! A.d (S.mkPath (iterFreer renderPath (return () <$ p))) & case fill of { Just fill -> (! A.fill (renderColour fill)) ; _ -> id }
 
         renderPath :: Show a => PathF a x -> (x -> S.Path) -> S.Path
         renderPath path cont = case path of

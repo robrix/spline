@@ -21,6 +21,7 @@ library
                      , blaze-svg
                      , freer-cofreer
                      , linear
+                     , mtl
   default-language:    Haskell2010
 
 executable spline
