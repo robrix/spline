@@ -45,6 +45,10 @@ packages:
     git: https://github.com/robrix/freer-cofreer.git
     commit: 8953df8be30c9bf7983b91a44c6d83108e204393
   extra-dep: true
+- location:
+    git: https://github.com/robrix/distribution.git
+    commit: 6fadde1602e0d033ce9c94119153ab19ed8220e3
+  extra-dep: true
 
 # Dependency packages to be pulled from upstream that are not in the resolver
 # (e.g., acme-missiles-0.3)
