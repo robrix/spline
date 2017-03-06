@@ -12,6 +12,7 @@ module Spline.Drawing
 import Control.Monad.Free.Freer
 import Control.Monad.State
 import Data.Function
+import Linear.Affine as Linear
 import Linear.V2 as Linear
 import Spline.Path
 import qualified Text.Blaze.Svg11 as S
@@ -43,7 +44,7 @@ path p = Path p `Then` return
 
 -- Running
 
-runDrawing :: (Real a, Show a) => Linear.V2 a -> Drawing a () -> String
+runDrawing :: (Real a, Show a) => V2 a -> Drawing a () -> String
 runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . flip evalState (DrawingState Nothing Nothing) . iterFreer algebra . fmap (const (return mempty))
   where algebra :: Show a => DrawingF a x -> (x -> State (DrawingState a) S.Svg) -> State (DrawingState a) S.Svg
         algebra drawing cont = case drawing of
@@ -57,9 +58,9 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
 
         renderPath :: Show a => PathF a x -> (x -> S.Path) -> S.Path
         renderPath path cont = case path of
-          Move (V2 x y) -> S.m x y >> cont ()
-          Line (V2 x y) -> S.l x y >> cont ()
-          Cubic (V2 c1x c1y) (V2 c2x c2y) (V2 x y) -> S.c c1x c1y c2x c2y x y
+          Move (P (V2 x y)) -> S.m x y >> cont ()
+          Line (P (V2 x y)) -> S.l x y >> cont ()
+          Cubic (P (V2 c1x c1y)) (P (V2 c2x c2y)) (P (V2 x y)) -> S.c c1x c1y c2x c2y x y
 
         renderColour :: Colour a -> S.AttributeValue
         renderColour colour = case colour of

@@ -2,6 +2,7 @@ module Main where
 
 import Data.Distribution
 import Data.Kind
+import Linear.Affine
 import Linear.V2 hiding (angle)
 import Spline.Drawing
 import Spline.Walk
@@ -13,7 +14,7 @@ main = do
           stroke Black
           fill Transparent
           path $ do
-            move (V2 100 100)
+            move (P (V2 100 100))
             p
 
 
@@ -26,4 +27,4 @@ polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
 wander :: Distribution (Path Float ())
 wander = do
   theta <- angle
-  pure $! line (V2 100 100 + polarToCartesian 15 theta)
+  pure $! line (P (V2 100 100 + polarToCartesian 15 theta))
