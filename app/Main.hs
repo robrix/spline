@@ -14,7 +14,7 @@ main = do
           stroke Black
           fill Transparent
           path $ do
-            move (P (V2 100 100))
+            moveR (V2 100 100)
             p
 
 
@@ -27,4 +27,7 @@ polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
 wander :: Distribution (Path Float ())
 wander = do
   theta <- angle
-  pure $! line (P (V2 100 100 + polarToCartesian 15 theta))
+  next <- angle * 0.1
+  pure $! do
+    lineR (polarToCartesian 15 theta)
+    lineR (polarToCartesian 15 (next + theta))
