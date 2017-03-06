@@ -5,9 +5,9 @@ import Control.Monad.Free.Freer
 import Linear.V2 as Linear
 
 data PathF a f where
-  Move :: Linear.V2 a -> PathF a ()
-  Line :: Linear.V2 a -> PathF a ()
-  Cubic :: Linear.V2 a -> Linear.V2 a -> Linear.V2 a -> PathF a ()
+  Move :: V2 a -> PathF a ()
+  Line :: V2 a -> PathF a ()
+  Cubic :: V2 a -> V2 a -> V2 a -> PathF a ()
   Close :: PathF a ()
 
 type Path a = Freer (PathF a)
