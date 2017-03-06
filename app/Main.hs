@@ -8,9 +8,8 @@ import Spline.Walk
 
 main :: IO ()
 main = do
-  path <- sample emptyEnv wander
-  putStrLn $ runDrawing (V2 200 200) (makePath path)
-  where makePath p = do
+  p <- sample emptyEnv wander
+  putStrLn $ runDrawing (V2 200 200) $ do
           stroke Black
           fill Transparent
           path $ do
