@@ -1,18 +1,30 @@
 module Main where
 
-import Linear.V2
+import Data.Distribution
+import Data.Kind
 import Linear.V2 hiding (angle)
 import Spline.Drawing
+import Spline.Walk
 
 main :: IO ()
-main = putStrLn $ runDrawing (V2 200 200) $ do
-  stroke Black
-  fill Transparent
-  path $ do
-    move (V2 10 10)
-    line (V2 20 20)
-    cubic (V2 20 40) (V2 30 30) (V2 50 10)
+main = do
+  path <- sample emptyEnv wander
+  putStrLn $ runDrawing (V2 200 200) (makePath path)
+  where makePath p = do
+          stroke Black
+          fill Transparent
+          path $ do
+            move (V2 100 100)
+            p
 
+
+angle :: Distribution Float
+angle = stdRandomR (negate pi) pi
 
 polarToCartesian :: Floating a => a -> a -> V2 a
 polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
+
+wander :: Distribution (Path Float ())
+wander = do
+  theta <- angle
+  pure $! line (V2 100 100 + polarToCartesian 15 theta)
