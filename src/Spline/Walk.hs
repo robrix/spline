@@ -3,6 +3,7 @@ module Spline.Walk where
 
 import Control.Monad.Free.Freer
 import Control.Monad.State
+import Data.Functor.Classes
 import Linear.Affine
 import Linear.V2
 import Spline.Path
@@ -41,3 +42,12 @@ runWalk = flip evalState 0 . iterFreerA algebra . fmap (const (return ()))
 
 polarToCartesian :: Floating a => a -> a -> V2 a
 polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
+
+
+-- Instances
+
+instance Show a => Show1 (WalkF a) where
+  liftShowsPrec _ _ d w = case w of
+    Face a -> showsUnaryWith showsPrec "Face" d a
+    Turn a -> showsUnaryWith showsPrec "Turn" d a
+    Step a -> showsUnaryWith showsPrec "Step" d a
