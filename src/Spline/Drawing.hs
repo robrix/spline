@@ -21,6 +21,7 @@ import qualified Text.Blaze.Svg11.Attributes as A
 import qualified Text.Blaze.Svg.Renderer.Pretty as S
 
 data Colour a = Black | White | Transparent
+  deriving Show
 
 data DrawingF a f where
   Fill :: Colour a -> DrawingF a ()
