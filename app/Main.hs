@@ -21,9 +21,6 @@ main = do
 angle :: Distribution Float
 angle = stdRandomR (negate pi) pi
 
-polarToCartesian :: Floating a => a -> a -> V2 a
-polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
-
 wander :: Distribution (Path Float ())
 wander = do
   theta <- angle
