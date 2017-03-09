@@ -2,6 +2,7 @@
 module Spline.Path where
 
 import Control.Monad.Free.Freer
+import Data.Functor.Classes
 import Linear.Affine
 import Linear.V2 as Linear
 
@@ -39,3 +40,19 @@ cubicR c1 c2 e = CubicR c1 c2 e `Then` return
 
 close :: Path a ()
 close = Close `Then` return
+
+
+-- Instances
+
+instance Show a => Show1 (PathF a) where
+  liftShowsPrec _ _ d w = case w of
+    Move a -> showsUnaryWith showsPrec "Move" d a
+    MoveR a -> showsUnaryWith showsPrec "MoveR" d a
+    Line a -> showsUnaryWith showsPrec "Line" d a
+    LineR a -> showsUnaryWith showsPrec "LineR" d a
+    Cubic c1 c2 p -> showsTernaryWith showsPrec showsPrec showsPrec "Cubic" d c1 c2 p
+    CubicR c1 c2 p -> showsTernaryWith showsPrec showsPrec showsPrec "CubicR" d c1 c2 p
+    Close -> showString "Close"
+    where showsTernaryWith :: (Int -> a -> ShowS) -> (Int -> b -> ShowS) -> (Int -> c -> ShowS) -> String -> Int -> a -> b -> c -> ShowS
+          showsTernaryWith sp1 sp2 sp3 name d x y z = showParen (d > 10) $
+            showString name . showChar ' ' . sp1 11 x . showChar ' ' . sp2 11 y . showChar ' ' . sp3 11 z
