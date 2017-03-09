@@ -29,6 +29,5 @@ wander n = do
           | n <= 0 = return (return ())
           | otherwise = do
             t <- turn <$> (angle * 0.1)
-            s <- step <$> 15
-            w <- wander (pred n)
-            return $ t >> s >> w
+            s <- (t >>) . step <$> 15
+            (s >>) <$> wander (pred n)
