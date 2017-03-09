@@ -12,6 +12,7 @@ module Spline.Drawing
 import Control.Monad.Free.Freer
 import Control.Monad.State
 import Data.Function
+import Data.Functor.Classes
 import Linear.Affine as Linear
 import Linear.V2 as Linear
 import Spline.Path
@@ -82,3 +83,12 @@ setFillColour c s = s { fillColour = c }
 
 setStrokeColour :: Maybe (Colour a) -> DrawingState a -> DrawingState a
 setStrokeColour c s = s { strokeColour = c }
+
+
+-- Instance
+
+instance Show a => Show1 (DrawingF a) where
+  liftShowsPrec _ _ d w = case w of
+    Fill a -> showsUnaryWith showsPrec "Fill" d a
+    Stroke a -> showsUnaryWith showsPrec "Stroke" d a
+    Path a -> showsUnaryWith showsPrec "Path" d a
