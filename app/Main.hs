@@ -9,22 +9,23 @@ import Spline.Walk
 
 main :: IO ()
 main = do
-  p <- sample emptyEnv wander
+  walk <- sample emptyEnv (wander 5)
   putStrLn $ runDrawing (V2 200 200) $ do
     stroke Black
     fill Transparent
     path $ do
       moveR (V2 100 100)
-      p
+      runWalk walk
 
 
 angle :: Distribution Float
 angle = stdRandomR (negate pi) pi
 
-wander :: Distribution (Path Float ())
-wander = do
-  theta <- angle
-  next <- angle * 0.1
-  pure $! do
-    lineR (polarToCartesian 15 theta)
-    lineR (polarToCartesian 15 (next + theta))
+wander :: Int -> Distribution (Walk Float ())
+wander n
+  | n <= 0 = return (return ())
+  | otherwise = do
+    face <$> angle
+    turn <$> (angle * 0.1)
+    step <$> 15
+    wander (pred n)
