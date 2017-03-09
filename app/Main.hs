@@ -11,11 +11,11 @@ main :: IO ()
 main = do
   p <- sample emptyEnv wander
   putStrLn $ runDrawing (V2 200 200) $ do
-          stroke Black
-          fill Transparent
-          path $ do
-            moveR (V2 100 100)
-            p
+    stroke Black
+    fill Transparent
+    path $ do
+      moveR (V2 100 100)
+      p
 
 
 angle :: Distribution Float
