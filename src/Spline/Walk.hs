@@ -37,7 +37,7 @@ runWalk = flip evalState 0 . iterFreerA algebra . fmap (const (return ()))
           Turn angle -> modify (+ angle) >> cont ()
           Step distance -> do
             angle <- get
-            return (line (P (polarToCartesian distance angle)))
+            return (line (P (polarToCartesian distance angle))) >> cont ()
 
 polarToCartesian :: Floating a => a -> a -> V2 a
 polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
