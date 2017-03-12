@@ -39,7 +39,7 @@ runWalk = snd . flip execState (0, return ()) . iterFreerA algebra . void
           Turn angle -> modify (first (+ angle)) >> cont ()
           Step distance -> do
             (angle, path) <- get
-            modify (second (>> line (P (polarToCartesian distance angle))))
+            modify (second (>> lineR (polarToCartesian distance angle)))
             cont ()
 
 polarToCartesian :: Floating a => a -> a -> V2 a
