@@ -3,6 +3,7 @@ module Spline.Walk where
 
 import Control.Monad.Free.Freer
 import Control.Monad.State
+import Data.Bifunctor
 import Data.Functor.Classes
 import Linear.Affine
 import Linear.V2
@@ -31,14 +32,15 @@ step a = Step a `Then` return
 -- Evaluation
 
 runWalk :: Floating a => Walk a () -> Path a ()
-runWalk = flip evalState 0 . iterFreerA algebra . fmap (const (return ()))
-  where algebra :: Floating a => WalkF a x -> (x -> State a (Path a ())) -> State a (Path a ())
+runWalk = snd . flip execState (0, return ()) . iterFreerA algebra . void
+  where algebra :: Floating a => WalkF a x -> (x -> State (a, Path a ()) ()) -> State (a, Path a ()) ()
         algebra walk cont = case walk of
-          Face angle -> put angle >> cont ()
-          Turn angle -> modify (+ angle) >> cont ()
+          Face angle -> modify (first (const angle)) >> cont ()
+          Turn angle -> modify (first (+ angle)) >> cont ()
           Step distance -> do
-            angle <- get
-            return (line (P (polarToCartesian distance angle))) >> cont ()
+            (angle, path) <- get
+            modify (second (>> line (P (polarToCartesian distance angle))))
+            cont ()
 
 polarToCartesian :: Floating a => a -> a -> V2 a
 polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
