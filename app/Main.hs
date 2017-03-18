@@ -1,7 +1,6 @@
 module Main where
 
 import Data.Distribution
-import Data.Kind
 import Linear.Affine
 import Linear.V2 hiding (angle)
 import Spline.Drawing
