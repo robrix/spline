@@ -10,12 +10,16 @@ import Spline.Walk
 main :: IO ()
 main = do
   walk <- sample emptyEnv (wander 5)
+  walk2 <- sample emptyEnv (permute walk (angle * 0.01))
   putStrLn $ runDrawing (V2 200 200) $ do
     stroke Black
     fill Transparent
     path $ do
       moveR (V2 100 100)
       runWalk walk
+    path $ do
+      moveR (V2 100 100)
+      runWalk walk2
 
 
 angle :: Distribution Float
