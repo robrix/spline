@@ -24,10 +24,6 @@ angle = stdRandomR (negate pi) pi
 wander :: Int -> Distribution (Walk Float ())
 wander n = do
     phi <- angle
-    (face phi >>) <$> turnStep n
-  where turnStep n
-          | n <= 0 = return (return ())
-          | otherwise = do
-            t <- turn <$> (angle * 0.1)
-            s <- (t >>) . step <$> 15
-            (s >>) <$> wander (pred n)
+    (face phi >>) <$> foldr (\ _ into -> do
+      phi <- angle * 0.1
+      (turn phi >> step 15 >>) <$> into) (return (return ())) [0..n]
