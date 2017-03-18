@@ -23,8 +23,8 @@ angle = stdRandomR (negate pi) pi
 
 wander :: Int -> Distribution (Walk Float ())
 wander n = do
-    face <$> angle
-    turnStep n
+    phi <- angle
+    (face phi >>) <$> turnStep n
   where turnStep n
           | n <= 0 = return (return ())
           | otherwise = do
