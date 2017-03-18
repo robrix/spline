@@ -9,10 +9,7 @@ import Spline.Walk
 
 main :: IO ()
 main = do
-  walks <- sample emptyEnv $ foldr (\ _ out -> do
-    next :| rest <- out
-    walk <- permute next (angle * 0.01)
-    return (walk :| next : rest)) ((:| []) <$> wander 5) [0..10]
+  walks <- sample emptyEnv (wanderings 5 10 0.01)
   putStrLn $ runDrawing (V2 200 200) $ do
     stroke Black
     fill Transparent
@@ -32,3 +29,9 @@ wander n = do
     (face phi >>) <$> foldr (\ _ into -> do
       phi <- angle * 0.1
       (turn phi >> step 15 >>) <$> into) (return (return ())) [0..n]
+
+wanderings :: Int -> Int -> Float -> Distribution [Walk Float ()]
+wanderings steps n delta = toList <$> foldr (\ _ out -> do
+  next :| rest <- out
+  walk <- permute next (angle * pure delta)
+  return (walk :| next : rest)) ((:| []) <$> wander steps) [0..n]
