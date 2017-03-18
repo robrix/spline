@@ -13,10 +13,9 @@ main = do
   putStrLn $ runDrawing (V2 200 200) $ do
     stroke Black
     fill Transparent
-    foldr (\ walk rest -> do
-      path $ do
-        moveR (V2 100 100)
-        runWalk walk
+    path $ foldr (\ walk rest -> do
+      move (P (V2 100 100))
+      runWalk walk
       rest) (return ()) walks
 
 
