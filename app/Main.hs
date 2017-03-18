@@ -1,6 +1,7 @@
 module Main where
 
 import Data.Distribution
+import Data.List.NonEmpty
 import Linear.Affine
 import Linear.V2 hiding (angle)
 import Spline.Drawing
@@ -8,17 +9,18 @@ import Spline.Walk
 
 main :: IO ()
 main = do
-  walk <- sample emptyEnv (wander 5)
-  walk2 <- sample emptyEnv (permute walk (angle * 0.01))
+  walks <- sample emptyEnv $ foldr (\ _ out -> do
+    next :| rest <- out
+    walk <- permute next (angle * 0.01)
+    return (walk :| next : rest)) ((:| []) <$> wander 5) [0..10]
   putStrLn $ runDrawing (V2 200 200) $ do
     stroke Black
     fill Transparent
-    path $ do
-      moveR (V2 100 100)
-      runWalk walk
-    path $ do
-      moveR (V2 100 100)
-      runWalk walk2
+    foldr (\ walk rest -> do
+      path $ do
+        moveR (V2 100 100)
+        runWalk walk
+      rest) (return ()) walks
 
 
 angle :: Distribution Float
