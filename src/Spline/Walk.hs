@@ -37,10 +37,7 @@ runWalk = snd . flip execState (0, return ()) . iterFreerA algebra . void
         algebra walk cont = case walk of
           Face angle -> modify (first (const angle)) >> cont ()
           Turn angle -> modify (first (+ angle)) >> cont ()
-          Step distance -> do
-            (angle, path) <- get
-            modify (second (>> lineR (polarToCartesian distance angle)))
-            cont ()
+          Step distance -> modify (\ (angle, path) -> (angle, path >> lineR (polarToCartesian distance angle))) >> cont ()
 
 polarToCartesian :: Floating a => a -> a -> V2 a
 polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
