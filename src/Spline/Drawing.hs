@@ -46,8 +46,8 @@ path p = Path p `Then` return
 
 -- Running
 
-runDrawing :: (Real a, Show a) => V2 a -> Drawing a () -> String
-runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.height (realValue h)) . flip evalState (DrawingState Nothing Nothing) . iterFreer algebra . fmap (const (return mempty))
+runDrawing :: (Real a, Show a) => Maybe (V2 a) -> Drawing a () -> String
+runDrawing size = S.renderSvg . (S.docTypeSvg !? (A.width . realValue . w <$> size) !? (A.height . realValue . h <$> size)) . flip evalState (DrawingState Nothing Nothing) . iterFreer algebra . fmap (const (return mempty))
   where algebra :: Show a => DrawingF a x -> (x -> State (DrawingState a) S.Svg) -> State (DrawingState a) S.Svg
         algebra drawing cont = case drawing of
           Fill c -> modify (setFillColour (Just c)) >> cont ()
@@ -74,6 +74,8 @@ runDrawing (V2 w h) = S.renderSvg . (S.docTypeSvg ! A.width (realValue w) ! A.he
           Transparent -> S.stringValue "transparent"
 
         realValue = S.stringValue . show . round . toRational
+        w (V2 w _) = w
+        h (V2 _ h) = h
 
 
 data DrawingState a = DrawingState { fillColour :: Maybe (Colour a), strokeColour :: Maybe (Colour a) }
