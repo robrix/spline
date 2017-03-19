@@ -44,16 +44,18 @@ permute walk byA = iterFreerA algebra (return () <$ walk)
 -- Evaluation
 
 runWalk :: Floating a => Walk a () -> Path a ()
-runWalk = flip evalState (0, 0) . iterFreerA algebra . fmap (const (return ()))
-  where algebra :: Floating a => WalkF a x -> (x -> State (a, a) (Path a ())) -> State (a, a) (Path a ())
+runWalk = flip evalState (WalkPhysics 0 0) . iterFreerA algebra . fmap (const (return ()))
+  where algebra :: Floating a => WalkF a x -> (x -> State (WalkPhysics a a) (Path a ())) -> State (WalkPhysics a a) (Path a ())
         algebra walk cont = case walk of
           Face angle -> modify (second (const angle)) >> cont ()
           Turn dAngularMomentum -> modify (second (+ dAngularMomentum)) >> cont ()
           Step dMomentum -> do
-            (momentum, angularMomentum) <- get
+            WalkPhysics momentum angularMomentum <- get
             modify (first (+ dMomentum))
             path <- cont ()
             return $ path >> lineR (polarToCartesian momentum angularMomentum)
+
+data WalkPhysics a b = WalkPhysics { momentum :: !a, angularMomentum :: !b }
 
 polarToCartesian :: Floating a => a -> a -> V2 a
 polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
@@ -66,3 +68,6 @@ instance Show a => Show1 (WalkF a) where
     Face a -> showsUnaryWith showsPrec "Face" d a
     Turn a -> showsUnaryWith showsPrec "Turn" d a
     Step a -> showsUnaryWith showsPrec "Step" d a
+
+instance Bifunctor WalkPhysics where
+  bimap f g (WalkPhysics a b) = WalkPhysics (f a) (g b)
