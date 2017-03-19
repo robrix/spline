@@ -10,7 +10,7 @@ import Spline.Walk
 main :: IO ()
 main = do
   walks <- sample emptyEnv (wanderings 5 10 0.01)
-  putStrLn $ runDrawing (Just (V2 200 200)) $ do
+  putStrLn $ runDrawing Nothing $ do
     stroke Black
     fill Transparent
     path $ foldr (\ walk rest -> do
