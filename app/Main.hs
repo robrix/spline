@@ -9,7 +9,7 @@ import Spline.Walk
 
 main :: IO ()
 main = do
-  walks <- sample emptyEnv (wanderings 5 10 0.01)
+  walks <- sample emptyEnv (wanderings 20 10 0.01)
   putStrLn $ runDrawing Nothing $ do
     stroke Black
     fill Transparent
