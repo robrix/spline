@@ -44,17 +44,15 @@ permute walk byA = iterFreerA algebra (return () <$ walk)
 -- Evaluation
 
 runWalk :: Floating a => Walk a () -> Path a ()
-runWalk = result . flip execState (WalkState 0 (return ())) . iterFreerA algebra . void
-  where algebra :: Floating a => WalkF a x -> (x -> State (WalkState a (Path a ())) ()) -> State (WalkState a (Path a ())) ()
+runWalk = flip evalState 0 . iterFreerA algebra . fmap (const (return ()))
+  where algebra :: Floating a => WalkF a x -> (x -> State a (Path a ())) -> State a (Path a ())
         algebra walk cont = case walk of
-          Face angle -> modify (modifyDirection (const angle)) >> cont ()
-          Turn angle -> modify (modifyDirection (+ angle)) >> cont ()
-          Step distance -> modify (\ (WalkState angle path) -> WalkState angle (path >> lineR (polarToCartesian distance angle))) >> cont ()
-
-data WalkState a b = WalkState { direction :: !a, result :: !b }
-
-modifyDirection :: (a -> a) -> WalkState a b -> WalkState a b
-modifyDirection f (WalkState angle result) = WalkState (f angle) result
+          Face angle -> modify (const angle) >> cont ()
+          Turn angle -> modify (+ angle) >> cont ()
+          Step distance -> do
+            angle <- get
+            path <- cont ()
+            return $ path >> lineR (polarToCartesian distance angle)
 
 polarToCartesian :: Floating a => a -> a -> V2 a
 polarToCartesian r theta = V2 (r * cos theta) (r * sin theta)
