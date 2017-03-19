@@ -2,14 +2,20 @@ module Main where
 
 import Data.Distribution
 import Data.List.NonEmpty
+import Data.Semigroup ((<>))
 import Linear.Affine
 import Linear.V2 hiding (angle)
+import Options.Applicative
 import Spline.Drawing
 import Spline.Walk
 
 main :: IO ()
 main = do
-  walks <- sample emptyEnv (wanderings 20 50 0.01)
+  (steps, n) <- execParser (info
+       (option auto (long "steps" <> short 's' <> showDefault <> metavar "N")
+    <|> option auto (long "walks" <> short 'w' <> showDefault <> metavar "N"))
+    (fullDesc <> progDesc "generative SVGs"))
+  walks <- sample emptyEnv (wanderings steps n 0.01)
   putStrLn $ runDrawing Nothing $ do
     stroke Black
     fill Transparent

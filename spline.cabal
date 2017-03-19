@@ -32,6 +32,7 @@ executable spline
   build-depends:       base
                      , distribution
                      , linear
+                     , optparse-applicative
                      , spline
   default-language:    Haskell2010
 
