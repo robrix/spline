@@ -12,8 +12,8 @@ import Spline.Walk
 main :: IO ()
 main = do
   (steps, n) <- execParser (info
-       (option auto (long "steps" <> short 's' <> showDefault <> metavar "N")
-    <|> option auto (long "walks" <> short 'w' <> showDefault <> metavar "N"))
+    ((,) <$> option auto (long "steps" <> short 's' <> showDefault <> metavar "N" <> value 100)
+         <*> option auto (long "walks" <> short 'w' <> showDefault <> metavar "N" <> value 50))
     (fullDesc <> progDesc "generative SVGs"))
   walks <- sample emptyEnv (wanderings steps n 0.01)
   putStrLn $ runDrawing Nothing $ do
