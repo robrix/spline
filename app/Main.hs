@@ -33,14 +33,11 @@ angle = stdRandomR (negate pi) pi
 wander :: Int -> Distribution (Walk Float ())
 wander n = do
     phi <- angle
-    momentum <- unitDistribution
-    (face phi >>) . walk <$> foldr (\ _ next -> do
-      phi <- angle * 0.001
-      delta <- unitDistribution * 0.1
-      Wander momentum angularMomentum rest <- next
-      return (Wander (momentum + delta) (angularMomentum + phi) (turn angularMomentum >> step momentum >> rest))) (return (Wander momentum 0 (return ()))) [0..n]
-
-data Wander a = Wander { momentum :: !a, angularMomentum :: !a, walk :: !(Walk a ()) }
+    (face phi >>) <$> foldr (\ _ next -> do
+      theta <- angle * 0.1
+      r <- unitDistribution
+      rest <- next
+      return (turn theta >> step r >> rest)) (return (return ())) [0..n]
 
 wanderings :: Int -> Int -> Float -> Distribution [Walk Float ()]
 wanderings steps n delta = toList <$> foldr (\ _ out -> do
