@@ -35,9 +35,10 @@ permute :: forall a f. (Applicative f, Num a) => Walk a () -> f a -> f (Walk a (
 permute walk byA = iterFreerA algebra (return () <$ walk)
   where algebra :: WalkF a x -> (x -> f (Walk a ())) -> f (Walk a ())
         algebra walk cont = case walk of
-          Face a -> (\ by -> (face (a + by) >>)) <$> byA <*> cont ()
-          Turn a -> (\ by -> (turn (a + by) >>)) <$> byA <*> cont ()
-          Step a -> (\ by -> (step (a + by) >>)) <$> byA <*> cont ()
+          Face a -> adding face a <$> byA <*> cont ()
+          Turn a -> adding turn a <$> byA <*> cont ()
+          Step a -> adding step a <$> byA <*> cont ()
+        adding with a by = (with (a + by) >>)
 
 
 -- Evaluation
