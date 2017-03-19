@@ -13,12 +13,12 @@ main = do
   putStrLn $ runDrawing Nothing $ do
     stroke Black
     fill Transparent
-    snd $ foldr (\ walk (d@(V2 dx dy), rest) -> (,) (V2 (dx + ddx) (dy + ddy)) $ do
+    snd $ foldr (\ walk (d, rest) -> (,) (d + dd) $ do
       path $ do
         move (P d)
         runWalk walk
       rest) (V2 100 100, return ()) walks
-  where V2 ddx ddy = V2 10 0
+  where dd = V2 10 0
 
 
 angle :: Distribution Float
